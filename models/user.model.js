@@ -8,8 +8,9 @@ const User = new Schema(
         name: { type: String, required: true },
         password: { type: String, required: true },
         status: { type: Number, required: true, default: 1 },
+        rol: {type: mongoose.Schema.Types.ObjectId, ref: 'Rol'}
     },
     { timestamps: true },
 )
 
-module.exports = mongoose.model('users', User)
+module.exports = mongoose.model('User', User)

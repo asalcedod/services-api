@@ -1,4 +1,4 @@
-const User = require('../models/user-model')
+const User = require('../models/user.model')
 
 createUser = (req, res) => {
     const body = req.body
@@ -50,8 +50,11 @@ updateUser = async (req, res) => {
                 message: 'User not found!',
             })
         }
+        user.identification = body.identification
+        user.email = body.email
         user.name = body.name
-        user.time = body.time
+        user.password = body.password
+        user.status = body.status
         user
             .save()
             .then(() => {
@@ -67,7 +70,7 @@ updateUser = async (req, res) => {
                     message: 'User not updated!',
                 })
             })
-    })
+    }).populate("rol")
 }
 
 deleteUser = async (req, res) => {
@@ -83,7 +86,7 @@ deleteUser = async (req, res) => {
         }
 
         return res.status(200).json({ success: true, data: user })
-    }).catch(err => console.log(err))
+    }).populate("rol").catch(err => console.log(err))
 }
 
 getUserById = async (req, res) => {
@@ -98,11 +101,11 @@ getUserById = async (req, res) => {
                 .json({ success: false, error: `User not found` })
         }
         return res.status(200).json({ success: true, data: user })
-    }).catch(err => console.log(err))
+    }).populate("rol").catch(err => console.log(err))
 }
 
 getUserByIdentification = async (req, res) => {
-    await User.findOne({ identification: req.params.identification, password: req.params.password }, (err, user) => {
+    const login = await User.findOne({ identification: req.params.identification, password: req.params.password }, (err, user) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -113,7 +116,7 @@ getUserByIdentification = async (req, res) => {
                 .json({ success: false, error: `User not found` })
         }
         return res.status(200).json({ success: true, data: user })
-    }).catch(err => console.log(err))
+    }).populate("rol").catch(err => console.log(err))
 }
 
 getUsers = async (req, res) => {
@@ -127,7 +130,7 @@ getUsers = async (req, res) => {
                 .json({ success: false, error: `User not found!` })
         }
         return res.status(200).json({ success: true, data: users })
-    }).catch(err => console.log(err))
+    }).populate("rol").catch(err => console.log(err))
 }
 
 module.exports = {

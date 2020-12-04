@@ -1,39 +1,39 @@
-const Submit = require('../models/submit.model')
+const Action = require('../models/action.model')
 
-createSubmit = (req, res) => {
+createAction = (req, res) => {
     const body = req.body
 
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a submit',
+            error: 'You must provide a action',
         })
     }
 
-    const submit = new Submit(body)
+    const action = new Action(body)
 
-    if (!submit) {
+    if (!action) {
         return res.status(400).json({ success: false, error: err })
     }
 
-    submit
+    action
         .save()
         .then(() => {
             return res.status(201).json({
                 success: true,
-                id: submit._id,
-                message: 'Submit created!',
+                id: action._id,
+                message: 'Action created!',
             })
         })
         .catch(error => {
             return res.status(400).json({
                 error,
-                message: 'Submit not created!',
+                message: 'Action not created!',
             })
         })
 }
 
-updateSubmit = async (req, res) => {
+updateAction = async (req, res) => {
     const body = req.body
 
     if (!body) {
@@ -43,85 +43,85 @@ updateSubmit = async (req, res) => {
         })
     }
 
-    Submit.findOne({ _id: req.params.id }, (err, submit) => {
+    Action.findOne({ _id: req.params.id }, (err, action) => {
         if (err) {
             return res.status(404).json({
                 err,
-                message: 'Submit not found!',
+                message: 'Action not found!',
             })
         }
-        submit.name = body.name
-        submit.email = body.email
-        submit.phone = body.phone
-        submit.status = body.status
-        submit.time = body.time
-        submit
+        action.identification = body.identification
+        action.email = body.email
+        action.name = body.name
+        action.password = body.password
+        action.status = body.status
+        action
             .save()
             .then(() => {
                 return res.status(200).json({
                     success: true,
-                    id: submit._id,
-                    message: 'Submit updated!',
+                    id: action._id,
+                    message: 'Action updated!',
                 })
             })
             .catch(error => {
                 return res.status(404).json({
                     error,
-                    message: 'Submit not updated!',
+                    message: 'Action not updated!',
                 })
             })
     })
 }
 
-deleteSubmit = async (req, res) => {
-    await Submit.findOneAndDelete({ _id: req.params.id }, (err, submit) => {
+deleteAction = async (req, res) => {
+    await Action.findOneAndDelete({ _id: req.params.id }, (err, action) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
 
-        if (!submit) {
+        if (!action) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found` })
+                .json({ success: false, error: `Action not found` })
         }
 
-        return res.status(200).json({ success: true, data: submit })
+        return res.status(200).json({ success: true, data: action })
     }).catch(err => console.log(err))
 }
 
-getSubmitById = async (req, res) => {
-    await Submit.findOne({ _id: req.params.id }, (err, submit) => {
+getActionById = async (req, res) => {
+    await Action.findOne({ _id: req.params.id }, (err, action) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
 
-        if (!submit) {
+        if (!action) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found` })
+                .json({ success: false, error: `Action not found` })
         }
-        return res.status(200).json({ success: true, data: submit })
+        return res.status(200).json({ success: true, data: action })
     }).catch(err => console.log(err))
 }
 
-getSubmits = async (req, res) => {
-    await Submit.find({}, (err, submits) => {
+getActions = async (req, res) => {
+    await Action.find({}, (err, actions) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-        if (!submits.length) {
+        if (!actions.length) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found!` })
+                .json({ success: false, error: `Action not found!` })
         }
-        return res.status(200).json({ success: true, data: submits })
+        return res.status(200).json({ success: true, data: actions })
     }).catch(err => console.log(err))
 }
 
 module.exports = {
-    createSubmit,
-    updateSubmit,
-    deleteSubmit,
-    getSubmits,
-    getSubmitById,
+    createAction,
+    updateAction,
+    deleteAction,
+    getActions,
+    getActionById,
 }

@@ -1,39 +1,39 @@
-const Submit = require('../models/submit.model')
+const Rol = require('../models/rol.model')
 
-createSubmit = (req, res) => {
+createRol = (req, res) => {
     const body = req.body
 
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a submit',
+            error: 'You must provide a rol',
         })
     }
 
-    const submit = new Submit(body)
+    const rol = new Rol(body)
 
-    if (!submit) {
+    if (!rol) {
         return res.status(400).json({ success: false, error: err })
     }
 
-    submit
+    rol
         .save()
         .then(() => {
             return res.status(201).json({
                 success: true,
-                id: submit._id,
-                message: 'Submit created!',
+                id: rol._id,
+                message: 'Rol created!',
             })
         })
         .catch(error => {
             return res.status(400).json({
                 error,
-                message: 'Submit not created!',
+                message: 'Rol not created!',
             })
         })
 }
 
-updateSubmit = async (req, res) => {
+updateRol = async (req, res) => {
     const body = req.body
 
     if (!body) {
@@ -43,85 +43,85 @@ updateSubmit = async (req, res) => {
         })
     }
 
-    Submit.findOne({ _id: req.params.id }, (err, submit) => {
+    Rol.findOne({ _id: req.params.id }, (err, rol) => {
         if (err) {
             return res.status(404).json({
                 err,
-                message: 'Submit not found!',
+                message: 'Rol not found!',
             })
         }
-        submit.name = body.name
-        submit.email = body.email
-        submit.phone = body.phone
-        submit.status = body.status
-        submit.time = body.time
-        submit
+        rol.name = body.name
+        rol.email = body.email
+        rol.phone = body.phone
+        rol.status = body.status
+        rol.time = body.time
+        rol
             .save()
             .then(() => {
                 return res.status(200).json({
                     success: true,
-                    id: submit._id,
-                    message: 'Submit updated!',
+                    id: rol._id,
+                    message: 'Rol updated!',
                 })
             })
             .catch(error => {
                 return res.status(404).json({
                     error,
-                    message: 'Submit not updated!',
+                    message: 'Rol not updated!',
                 })
             })
     })
 }
 
-deleteSubmit = async (req, res) => {
-    await Submit.findOneAndDelete({ _id: req.params.id }, (err, submit) => {
+deleteRol = async (req, res) => {
+    await Rol.findOneAndDelete({ _id: req.params.id }, (err, rol) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
 
-        if (!submit) {
+        if (!rol) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found` })
+                .json({ success: false, error: `Rol not found` })
         }
 
-        return res.status(200).json({ success: true, data: submit })
+        return res.status(200).json({ success: true, data: rol })
     }).catch(err => console.log(err))
 }
 
-getSubmitById = async (req, res) => {
-    await Submit.findOne({ _id: req.params.id }, (err, submit) => {
+getRolById = async (req, res) => {
+    await Rol.findOne({ _id: req.params.id }, (err, rol) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
 
-        if (!submit) {
+        if (!rol) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found` })
+                .json({ success: false, error: `Rol not found` })
         }
-        return res.status(200).json({ success: true, data: submit })
+        return res.status(200).json({ success: true, data: rol })
     }).catch(err => console.log(err))
 }
 
-getSubmits = async (req, res) => {
-    await Submit.find({}, (err, submits) => {
+getRols = async (req, res) => {
+    await Rol.find({}, (err, rols) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-        if (!submits.length) {
+        if (!rols.length) {
             return res
                 .status(404)
-                .json({ success: false, error: `Submit not found!` })
+                .json({ success: false, error: `Rol not found!` })
         }
-        return res.status(200).json({ success: true, data: submits })
+        return res.status(200).json({ success: true, data: rols })
     }).catch(err => console.log(err))
 }
 
 module.exports = {
-    createSubmit,
-    updateSubmit,
-    deleteSubmit,
-    getSubmits,
-    getSubmitById,
+    createRol,
+    updateRol,
+    deleteRol,
+    getRols,
+    getRolById,
 }
