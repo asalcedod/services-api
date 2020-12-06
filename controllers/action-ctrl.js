@@ -50,10 +50,9 @@ updateAction = async (req, res) => {
                 message: 'Action not found!',
             })
         }
-        action.identification = body.identification
-        action.email = body.email
+        action.code = body.code
         action.name = body.name
-        action.password = body.password
+        action.description = body.description
         action.status = body.status
         action
             .save()

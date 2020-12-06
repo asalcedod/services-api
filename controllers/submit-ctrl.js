@@ -54,7 +54,6 @@ updateSubmit = async (req, res) => {
         submit.email = body.email
         submit.phone = body.phone
         submit.status = body.status
-        submit.time = body.time
         submit
             .save()
             .then(() => {

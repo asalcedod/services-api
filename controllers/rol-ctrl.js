@@ -50,11 +50,10 @@ updateRol = async (req, res) => {
                 message: 'Rol not found!',
             })
         }
+        rol.code = body.code
         rol.name = body.name
-        rol.email = body.email
-        rol.phone = body.phone
+        rol.description = body.description
         rol.status = body.status
-        rol.time = body.time
         rol
             .save()
             .then(() => {
