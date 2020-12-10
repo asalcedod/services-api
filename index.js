@@ -26,4 +26,4 @@ app.use('/api', userRouter)
 app.use('/api', rolRouter)
 app.use('/api', actionRouter)
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`))
+app.listen(apiPort, () => console.log(`Server running: http://localhost:${apiPort}`))
