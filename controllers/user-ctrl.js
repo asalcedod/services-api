@@ -51,10 +51,12 @@ updateUser = async (req, res) => {
             })
         }
         user.identification = body.identification
+        user.username = body.username
         user.email = body.email
         user.name = body.name
         user.password = body.password
         user.status = body.status
+        user.rol = body.rol
         user
             .save()
             .then(() => {
@@ -105,7 +107,7 @@ getUserById = async (req, res) => {
 }
 
 getUserByIdentification = async (req, res) => {
-    const login = await User.findOne({ identification: req.params.identification, password: req.params.password }, (err, user) => {
+    const login = await User.findOne({ username: req.params.username, password: req.params.password }, (err, user) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
