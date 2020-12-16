@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const Submit = new Schema(
+const Product = new Schema(
     {
         name: { type: String, required: true },
         code: { type: String, required: true, unique: true },
@@ -14,4 +14,4 @@ const Submit = new Schema(
     { timestamps: true },
 )
 
-module.exports = mongoose.model('Submit', Submit)
+module.exports = mongoose.model('Product', Product)

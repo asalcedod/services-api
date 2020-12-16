@@ -1,4 +1,21 @@
+const multer = require('multer');
+
 const User = require('../models/user.model')
+
+const storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        fs.mkdir('./uploads/profiles', function (err) {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                callback(null, './uploads/profiles');
+            }
+        })
+    },
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '-' + Date.now());
+    }
+});
 
 createUser = (req, res) => {
     const body = req.body
@@ -14,6 +31,16 @@ createUser = (req, res) => {
 
     if (!user) {
         return res.status(400).json({ success: false, error: err })
+    }
+
+    if (body.path) {
+        const upload = multer({ storage: storage }).single('path');
+        upload(req, res, (err) => {
+            if (err) {
+                return res.end("Error uploading file.");
+            }
+            res.end("File is uploaded");
+        });
     }
 
     user
@@ -37,6 +64,15 @@ updateUser = async (req, res) => {
     const body = req.body
 
     if (!body) {
+        if (body.path) {
+            const upload = multer({ storage: storage }).single('path');
+            upload(req, res, (err) => {
+                if (err) {
+                    return res.end("Error uploading file.");
+                }
+                res.end("File is uploaded");
+            });
+        }
         return res.status(400).json({
             success: false,
             error: 'You must provide a body to update',
@@ -54,6 +90,7 @@ updateUser = async (req, res) => {
         user.username = body.username
         user.email = body.email
         user.name = body.name
+        user.path = body.path
         user.password = body.password
         user.status = body.status
         user.rol = body.rol

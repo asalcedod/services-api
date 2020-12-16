@@ -1,4 +1,21 @@
+const multer = require('multer');
+
 const Product = require('../models/product.model')
+
+const storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        fs.mkdir('./uploads/products', function (err) {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                callback(null, './uploads/products');
+            }
+        })
+    },
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '-' + Date.now());
+    }
+});
 
 createProduct = (req, res) => {
     const body = req.body
@@ -14,6 +31,15 @@ createProduct = (req, res) => {
 
     if (!product) {
         return res.status(400).json({ success: false, error: err })
+    }
+    if (body.path) {
+        const upload = multer({ storage: storage }).single('path');
+        upload(req, res, (err) => {
+            if (err) {
+                return res.end("Error uploading file.");
+            }
+            res.end("File is uploaded");
+        });
     }
 
     product
@@ -37,6 +63,15 @@ updateProduct = async (req, res) => {
     const body = req.body
 
     if (!body) {
+        if (body.path) {
+            const upload = multer({ storage: storage }).single('path');
+            upload(req, res, (err) => {
+                if (err) {
+                    return res.end("Error uploading file.");
+                }
+                res.end("File is uploaded");
+            });
+        }
         return res.status(400).json({
             success: false,
             error: 'You must provide a body to update',
@@ -50,6 +85,7 @@ updateProduct = async (req, res) => {
                 message: 'Product not found!',
             })
         }
+
         product.name = body.name
         product.code = body.code
         product.price = body.price

@@ -7,6 +7,7 @@ const User = new Schema(
         username: { type: String, required: true, unique: true },
         email: { type: String, required: true, unique: true },
         name: { type: String, required: true },
+        path: { type: String, default: "" },
         password: { type: String, required: true },
         status: { type: Number, required: true, default: 1 },
         rol: {type: mongoose.Schema.Types.ObjectId, ref: 'Rol'}

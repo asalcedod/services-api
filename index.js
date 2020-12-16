@@ -7,6 +7,8 @@ const submitRouter = require('./routes/submit-router')
 const userRouter = require('./routes/user-router')
 const rolRouter = require('./routes/rol-router')
 const actionRouter = require('./routes/action-router')
+const categoryRouter = require('./routes/category-router')
+const productRouter = require('./routes/product-router')
 
 const app = express()
 const apiPort = 3000
@@ -25,5 +27,7 @@ app.use('/api', submitRouter)
 app.use('/api', userRouter)
 app.use('/api', rolRouter)
 app.use('/api', actionRouter)
+app.use('/api', categoryRouter)
+app.use('/api', productRouter)
 
 app.listen(apiPort, () => console.log(`Server running: http://localhost:${apiPort}`))
