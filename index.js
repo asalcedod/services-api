@@ -23,6 +23,8 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
+app.use('/public', express.static(`${__dirname}/uploads`))
+
 app.use('/api', submitRouter)
 app.use('/api', userRouter)
 app.use('/api', rolRouter)

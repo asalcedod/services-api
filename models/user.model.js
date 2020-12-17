@@ -15,4 +15,8 @@ const User = new Schema(
     { timestamps: true },
 )
 
+User.methods.setPath = function(filename) {
+    this.path = `http://localhost:3000/public/${filename}`
+}
+
 module.exports = mongoose.model('User', User)
