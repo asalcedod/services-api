@@ -12,10 +12,10 @@ createUser = (req, res) => {
 
     const user = new User(body)
 
-    /*if(body.path) {
-        const { path } = body
-        user.setPath(path)
-    }*/
+    if(req.file) {
+        const { filename } = req.file
+        user.setImageUrl(filename)
+    }
 
     if (!user) {
         return res.status(400).json({ success: false, error: err })
@@ -64,10 +64,10 @@ updateUser = async (req, res) => {
         user.password = body.password
         user.status = body.status
         user.rol = body.rol
-        /*if(body.path) {
-            const { path } = body
-            user.setPath(path)
-        }*/
+        if(req.file) {
+            const { filename } = req.file
+            user.setImageUrl(filename)
+        }
         user
             .save()
             .then(() => {

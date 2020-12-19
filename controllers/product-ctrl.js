@@ -55,7 +55,7 @@ updateProduct = async (req, res) => {
         product.code = body.code
         product.price = body.price
         product.description = body.description
-        product.path = body.path
+        product.imageUrl = body.imageUrl
         product.categories = body.categories
         product.status = body.status
         product
