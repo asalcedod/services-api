@@ -7,7 +7,7 @@ const Product = new Schema(
         code: { type: String, required: true, unique: true },
         price: { type: String, required: true, default: '0' },
         description: { type: String },
-        imageUrl: { type: String },
+        imageUrl: { type: String, default: "" },
         categories: [{type: mongoose.Schema.Types.ObjectId, ref: 'Category'}],
         status: { type: Number, required: true, default: 1 },
     },
