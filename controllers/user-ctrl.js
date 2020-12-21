@@ -1,3 +1,4 @@
+const fs = require('fs')
 const User = require('../models/user.model')
 
 createUser = (req, res) => {
@@ -12,7 +13,7 @@ createUser = (req, res) => {
 
     const user = new User(body)
 
-    if(req.file) {
+    if (req.file) {
         const { filename } = req.file
         user.setImageUrl(filename)
     }
@@ -64,7 +65,17 @@ updateUser = async (req, res) => {
         user.password = body.password
         user.status = body.status
         user.rol = body.rol
-        if(req.file) {
+        if (req.file) {
+            if (user.imageUrl) {
+                const arr = user.imageUrl.split("/")
+                const path = `./uploads/${arr[arr.length-1]}`
+                fs.unlink(path, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                })
+            }
             const { filename } = req.file
             user.setImageUrl(filename)
         }
