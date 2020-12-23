@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -11,7 +12,9 @@ const categoryRouter = require('./routes/category-router')
 const productRouter = require('./routes/product-router')
 
 const app = express()
-const apiPort = 3000
+
+const apiPort = process.env.PORT
+const route = process.env.URL_LOCAL
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
@@ -32,4 +35,4 @@ app.use('/api', actionRouter)
 app.use('/api', categoryRouter)
 app.use('/api', productRouter)
 
-app.listen(apiPort, () => console.log(`Server running: http://localhost:${apiPort}`))
+app.listen(apiPort, () => console.log(`Server running: ${route}:${apiPort}`))
