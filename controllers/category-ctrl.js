@@ -4,7 +4,7 @@ createCategory = (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a category',
         })
@@ -13,7 +13,7 @@ createCategory = (req, res) => {
     const category = new Category(body)
 
     if (!category) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(203).json({ success: false, error: err })
     }
 
     category
@@ -26,7 +26,7 @@ createCategory = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(203).json({
                 error,
                 message: 'Category not created!',
             })
@@ -37,7 +37,7 @@ updateCategory = async (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -45,7 +45,7 @@ updateCategory = async (req, res) => {
 
     Category.findOne({ _id: req.params.id }, (err, category) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(203).json({
                 err,
                 message: 'Category not found!',
             })
@@ -64,7 +64,7 @@ updateCategory = async (req, res) => {
                 })
             })
             .catch(error => {
-                return res.status(404).json({
+                return res.status(203).json({
                     error,
                     message: 'Category not updated!',
                 })
@@ -75,12 +75,12 @@ updateCategory = async (req, res) => {
 deleteCategory = async (req, res) => {
     await Category.findOneAndDelete({ _id: req.params.id }, (err, category) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!category) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Category not found` })
         }
 
@@ -91,12 +91,12 @@ deleteCategory = async (req, res) => {
 getCategoryById = async (req, res) => {
     await Category.findOne({ _id: req.params.id }, (err, category) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!category) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Category not found` })
         }
         return res.status(200).json({ success: true, data: category })
@@ -106,11 +106,11 @@ getCategoryById = async (req, res) => {
 getCategories = async (req, res) => {
     await Category.find({}, (err, categories) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
         if (!categories.length) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Category not found!` })
         }
         return res.status(200).json({ success: true, data: categories })

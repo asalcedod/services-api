@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
+require("dotenv").config();
 
 mongoose
-    .connect('mongodb://127.0.0.1:27017/aurora', { useNewUrlParser: true, seUnifiedTopology: true })
+    .connect(process.env.MONGODB_URL, { useNewUrlParser: true, seUnifiedTopology: true })
     .catch(e => {
         console.error('Connection error', e.message)
     })

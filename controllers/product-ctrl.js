@@ -4,7 +4,7 @@ createProduct = (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a product',
         })
@@ -13,7 +13,7 @@ createProduct = (req, res) => {
     const product = new Product(body)
 
     if (!product) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(203).json({ success: false, error: err })
     }
 
     product
@@ -26,7 +26,7 @@ createProduct = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(203).json({
                 error,
                 message: 'Product not created!',
             })
@@ -37,7 +37,7 @@ updateProduct = async (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -45,7 +45,7 @@ updateProduct = async (req, res) => {
 
     Product.findOne({ _id: req.params.id }, (err, product) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(203).json({
                 err,
                 message: 'Product not found!',
             })
@@ -68,7 +68,7 @@ updateProduct = async (req, res) => {
                 })
             })
             .catch(error => {
-                return res.status(404).json({
+                return res.status(203).json({
                     error,
                     message: 'Product not updated!',
                 })
@@ -79,12 +79,12 @@ updateProduct = async (req, res) => {
 deleteProduct = async (req, res) => {
     await Product.findOneAndDelete({ _id: req.params.id }, (err, product) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!product) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Product not found` })
         }
 
@@ -95,12 +95,12 @@ deleteProduct = async (req, res) => {
 getProductById = async (req, res) => {
     await Product.findOne({ _id: req.params.id }, (err, product) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!product) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Product not found` })
         }
         return res.status(200).json({ success: true, data: product })
@@ -110,11 +110,11 @@ getProductById = async (req, res) => {
 getProducts = async (req, res) => {
     await Product.find({}, (err, products) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
         if (!products.length) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Product not found!` })
         }
         return res.status(200).json({ success: true, data: products })

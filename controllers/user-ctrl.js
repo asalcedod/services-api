@@ -1,11 +1,13 @@
 const fs = require('fs')
+const logger = require('../config/logger')
 const User = require('../models/user.model')
 
 createUser = (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        logger.error('You must provide a user')
+        return res.status(203).json({
             success: false,
             error: 'You must provide a user',
         })
@@ -19,7 +21,7 @@ createUser = (req, res) => {
     }
 
     if (!user) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(203).json({ success: false, error: err })
     }
 
     user
@@ -32,7 +34,7 @@ createUser = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(203).json({
                 error,
                 message: 'User not created!',
             })
@@ -43,7 +45,7 @@ updateUser = async (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -51,7 +53,7 @@ updateUser = async (req, res) => {
 
     User.findOne({ _id: req.params.id }, (err, usr) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(203).json({
                 err,
                 message: 'User not found!',
             })
@@ -89,7 +91,7 @@ updateUser = async (req, res) => {
                 })
             })
             .catch(error => {
-                return res.status(404).json({
+                return res.status(203).json({
                     error,
                     message: 'User not updated!',
                 })
@@ -100,12 +102,12 @@ updateUser = async (req, res) => {
 deleteUser = async (req, res) => {
     await User.findOneAndDelete({ _id: req.params.id }, (err, user) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!user) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `User not found` })
         }
 
@@ -116,27 +118,27 @@ deleteUser = async (req, res) => {
 getUserById = async (req, res) => {
     await User.findOne({ _id: req.params.id }, (err, user) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!user) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `User not found` })
         }
         return res.status(200).json({ success: true, data: user })
     }).populate("rol").catch(err => console.log(err))
 }
 
-getUserByIdentification = async (req, res) => {
+loginUser = async (req, res) => {
     const login = await User.findOne({ username: req.params.username, password: req.params.password }, (err, user) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!user) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `User not found` })
         }
         return res.status(200).json({ success: true, data: user })
@@ -146,11 +148,11 @@ getUserByIdentification = async (req, res) => {
 getUsers = async (req, res) => {
     await User.find({}, (err, users) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
         if (!users.length) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `User not found!` })
         }
         return res.status(200).json({ success: true, data: users })
@@ -163,5 +165,5 @@ module.exports = {
     deleteUser,
     getUsers,
     getUserById,
-    getUserByIdentification,
+    loginUser,
 }

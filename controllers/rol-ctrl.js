@@ -4,7 +4,7 @@ createRol = (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a rol',
         })
@@ -13,7 +13,7 @@ createRol = (req, res) => {
     const rol = new Rol(body)
 
     if (!rol) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(203).json({ success: false, error: err })
     }
 
     rol
@@ -26,7 +26,7 @@ createRol = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(203).json({
                 error,
                 message: 'Rol not created!',
             })
@@ -37,7 +37,7 @@ updateRol = async (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -45,7 +45,7 @@ updateRol = async (req, res) => {
 
     Rol.findOne({ _id: req.params.id }, (err, rol) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(203).json({
                 err,
                 message: 'Rol not found!',
             })
@@ -64,7 +64,7 @@ updateRol = async (req, res) => {
                 })
             })
             .catch(error => {
-                return res.status(404).json({
+                return res.status(203).json({
                     error,
                     message: 'Rol not updated!',
                 })
@@ -75,12 +75,12 @@ updateRol = async (req, res) => {
 deleteRol = async (req, res) => {
     await Rol.findOneAndDelete({ _id: req.params.id }, (err, rol) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!rol) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Rol not found` })
         }
 
@@ -91,12 +91,12 @@ deleteRol = async (req, res) => {
 getRolById = async (req, res) => {
     await Rol.findOne({ _id: req.params.id }, (err, rol) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!rol) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Rol not found` })
         }
         return res.status(200).json({ success: true, data: rol })
@@ -106,11 +106,11 @@ getRolById = async (req, res) => {
 getRols = async (req, res) => {
     await Rol.find({}, (err, rols) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
         if (!rols.length) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Rol not found!` })
         }
         return res.status(200).json({ success: true, data: rols })

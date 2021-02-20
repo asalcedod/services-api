@@ -4,7 +4,7 @@ createAction = (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a action',
         })
@@ -13,7 +13,7 @@ createAction = (req, res) => {
     const action = new Action(body)
 
     if (!action) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(203).json({ success: false, error: err })
     }
 
     action
@@ -26,7 +26,7 @@ createAction = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(203).json({
                 error,
                 message: 'Action not created!',
             })
@@ -37,7 +37,7 @@ updateAction = async (req, res) => {
     const body = req.body
 
     if (!body) {
-        return res.status(400).json({
+        return res.status(203).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -45,7 +45,7 @@ updateAction = async (req, res) => {
 
     Action.findOne({ _id: req.params.id }, (err, action) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(203).json({
                 err,
                 message: 'Action not found!',
             })
@@ -64,7 +64,7 @@ updateAction = async (req, res) => {
                 })
             })
             .catch(error => {
-                return res.status(404).json({
+                return res.status(203).json({
                     error,
                     message: 'Action not updated!',
                 })
@@ -75,12 +75,12 @@ updateAction = async (req, res) => {
 deleteAction = async (req, res) => {
     await Action.findOneAndDelete({ _id: req.params.id }, (err, action) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!action) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Action not found` })
         }
 
@@ -91,12 +91,12 @@ deleteAction = async (req, res) => {
 getActionById = async (req, res) => {
     await Action.findOne({ _id: req.params.id }, (err, action) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
 
         if (!action) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Action not found` })
         }
         return res.status(200).json({ success: true, data: action })
@@ -106,11 +106,11 @@ getActionById = async (req, res) => {
 getActions = async (req, res) => {
     await Action.find({}, (err, actions) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(203).json({ success: false, error: err })
         }
         if (!actions.length) {
             return res
-                .status(404)
+                .status(203)
                 .json({ success: false, error: `Action not found!` })
         }
         return res.status(200).json({ success: true, data: actions })
