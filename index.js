@@ -16,9 +16,10 @@ const app = express()
 const apiPort = process.env.PORT
 const route = process.env.URL_LOCAL
 
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
-app.use(bodyParser.json())
+
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
