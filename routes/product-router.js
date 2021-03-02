@@ -8,6 +8,6 @@ router.post('/product', ProductCtrl.createProduct)
 router.put('/product/:id', ProductCtrl.updateProduct)
 router.delete('/product/:id', ProductCtrl.deleteProduct)
 router.get('/product/:id', ProductCtrl.getProductById)
-router.get('/products', ProductCtrl.getProducts)
+router.get('/products/:page?/:limit?', ProductCtrl.getProducts)
 
 module.exports = router

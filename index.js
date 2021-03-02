@@ -1,4 +1,5 @@
 require('dotenv').config()
+const enviroment = require("./config/enviroment");
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -14,7 +15,6 @@ const productRouter = require('./routes/product-router')
 const app = express()
 
 const apiPort = process.env.PORT
-const route = process.env.URL_LOCAL
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -36,4 +36,4 @@ app.use('/api', actionRouter)
 app.use('/api', categoryRouter)
 app.use('/api', productRouter)
 
-app.listen(apiPort, () => console.log(`Server running: ${route}:${apiPort}`))
+app.listen(apiPort, () => console.log(`Server running: ${enviroment.ApiUrl()}`))

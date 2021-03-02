@@ -1,126 +1,138 @@
-const Category = require('../models/category.model')
+const Category = require("../models/category.model");
 
 createCategory = (req, res) => {
-    const body = req.body
+  const body = req.body;
 
-    if (!body) {
-        return res.status(203).json({
-            success: false,
-            error: 'You must provide a category',
-        })
-    }
+  if (!body) {
+    return res.status(203).json({
+      success: false,
+      error: "You must provide a category",
+    });
+  }
 
-    const category = new Category(body)
+  const category = new Category(body);
 
-    if (!category) {
-        return res.status(203).json({ success: false, error: err })
-    }
+  if (!category) {
+    return res.status(203).json({ success: false, error: err });
+  }
 
-    category
-        .save()
-        .then(() => {
-            return res.status(201).json({
-                success: true,
-                id: category._id,
-                message: 'Category created!',
-            })
-        })
-        .catch(error => {
-            return res.status(203).json({
-                error,
-                message: 'Category not created!',
-            })
-        })
-}
+  category
+    .save()
+    .then(() => {
+      return res.status(201).json({
+        success: true,
+        id: category._id,
+        message: "Category created!",
+      });
+    })
+    .catch((error) => {
+      return res.status(203).json({
+        error,
+        message: "Category not created!",
+      });
+    });
+};
 
 updateCategory = async (req, res) => {
-    const body = req.body
+  const body = req.body;
 
-    if (!body) {
-        return res.status(203).json({
-            success: false,
-            error: 'You must provide a body to update',
-        })
+  if (!body) {
+    return res.status(203).json({
+      success: false,
+      error: "You must provide a body to update",
+    });
+  }
+
+  Category.findOne({ _id: req.params.id }, (err, category) => {
+    if (err) {
+      return res.status(203).json({
+        err,
+        message: "Category not found!",
+      });
     }
-
-    Category.findOne({ _id: req.params.id }, (err, category) => {
-        if (err) {
-            return res.status(203).json({
-                err,
-                message: 'Category not found!',
-            })
-        }
-        category.code = body.code
-        category.name = body.name
-        category.description = body.description
-        category.status = body.status
-        category
-            .save()
-            .then(() => {
-                return res.status(200).json({
-                    success: true,
-                    id: category._id,
-                    message: 'Category updated!',
-                })
-            })
-            .catch(error => {
-                return res.status(203).json({
-                    error,
-                    message: 'Category not updated!',
-                })
-            })
-    })
-}
+    category.code = body.code;
+    category.name = body.name;
+    category.description = body.description;
+    category.status = body.status;
+    category
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          success: true,
+          id: category._id,
+          message: "Category updated!",
+        });
+      })
+      .catch((error) => {
+        return res.status(203).json({
+          error,
+          message: "Category not updated!",
+        });
+      });
+  });
+};
 
 deleteCategory = async (req, res) => {
-    await Category.findOneAndDelete({ _id: req.params.id }, (err, category) => {
-        if (err) {
-            return res.status(203).json({ success: false, error: err })
-        }
+  await Category.findOneAndDelete({ _id: req.params.id }, (err, category) => {
+    if (err) {
+      return res.status(203).json({ success: false, error: err });
+    }
 
-        if (!category) {
-            return res
-                .status(203)
-                .json({ success: false, error: `Category not found` })
-        }
+    if (!category) {
+      return res
+        .status(203)
+        .json({ success: false, error: `Category not found` });
+    }
 
-        return res.status(200).json({ success: true, data: category })
-    }).catch(err => console.log(err))
-}
+    return res.status(200).json({ success: true, data: category });
+  }).catch((err) => console.log(err));
+};
 
 getCategoryById = async (req, res) => {
-    await Category.findOne({ _id: req.params.id }, (err, category) => {
-        if (err) {
-            return res.status(203).json({ success: false, error: err })
-        }
+  await Category.findOne({ _id: req.params.id }, (err, category) => {
+    if (err) {
+      return res.status(203).json({ success: false, error: err });
+    }
 
-        if (!category) {
-            return res
-                .status(203)
-                .json({ success: false, error: `Category not found` })
-        }
-        return res.status(200).json({ success: true, data: category })
-    }).catch(err => console.log(err))
-}
+    if (!category) {
+      return res
+        .status(203)
+        .json({ success: false, error: `Category not found` });
+    }
+    return res.status(200).json({ success: true, data: category });
+  }).catch((err) => console.log(err));
+};
 
 getCategories = async (req, res) => {
-    await Category.find({}, (err, categories) => {
-        if (err) {
-            return res.status(203).json({ success: false, error: err })
-        }
-        if (!categories.length) {
-            return res
-                .status(203)
-                .json({ success: false, error: `Category not found!` })
-        }
-        return res.status(200).json({ success: true, data: categories })
-    }).catch(err => console.log(err))
-}
+  const params = req.params;
+  let totalpages = 0;
+  const limit = params.limit ? parseInt(params.limit) : 10;
+  const page = params.page ? parseInt(params.page) - 1 : 0;
+  await Category.count((error, result) => {
+    totalpages = Math.ceil(result / limit);
+  });
+  await Category.find({}, (err, categories) => {
+    if (err) {
+      return res.status(203).json({ success: false, error: err });
+    }
+    if (!categories.length) {
+      return res
+        .status(203)
+        .json({ success: false, error: `Category not found!` });
+    }
+    return res
+      .status(200)
+      .json({ success: true, data: categories, totalpages });
+  })
+    .limit(limit)
+    .skip(limit * page)
+    .catch((err) => console.log(err));
+};
 
 module.exports = {
-    createCategory,
-    updateCategory,
-    deleteCategory,
-    getCategories,
-    getCategoryById,
-}
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getCategories,
+  getCategoryById,
+};

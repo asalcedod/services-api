@@ -175,6 +175,13 @@ loginUser = async (req, res) => {
 };
 
 getUsers = async (req, res) => {
+  const params = req.params;
+  let totalpages = 0;
+  const limit = params.limit ? parseInt(params.limit) : 10;
+  const page = params.page ? parseInt(params.page) - 1 : 0;
+  await User.count((error, result) => {
+    totalpages = Math.ceil(result / limit);
+  });
   await User.find({}, (err, users) => {
     if (err) {
       logger.error(err.toString());
@@ -187,8 +194,10 @@ getUsers = async (req, res) => {
         .json({ success: false, error: `User not founds!` });
     }
     logger.info(`Users found`);
-    return res.status(200).json({ success: true, data: users });
+    return res.status(200).json({ success: true, data: users, totalpages });
   })
+    .limit(limit)
+    .skip(limit * page)
     .populate("rol")
     .catch((err) => console.log(err));
 };
