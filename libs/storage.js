@@ -1,6 +1,7 @@
 const multer = require('multer')
 const fs = require('fs')
 
+// INIT Storage upload file in server **************
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         fs.mkdir('./uploads', function (err) {
@@ -13,6 +14,16 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage })
+// const upload = multer({ storage })
+// END Storage upload file in server *****************
+
+const memoryStorage = multer.memoryStorage();
+
+const upload = multer({
+  storage: memoryStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+  },
+});
 
 module.exports = upload

@@ -1,12 +1,17 @@
 const fs = require("fs");
-const logger = require("../config/logger");
+const logInfo = require("../config/logInfo");
+const logError = require("../config/logError");
 const User = require("../models/user.model");
+const { Storage } = require("@google-cloud/storage");
+
+const storage = new Storage();
+const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
 createUser = (req, res) => {
   const body = req.body;
 
   if (Object.entries(body).length === 0 || body == null) {
-    logger.error("You must provide a user");
+    logError.error("You must provide a user");
     return res.status(203).json({
       success: false,
       error: "You must provide a user",
@@ -16,8 +21,24 @@ createUser = (req, res) => {
   const user = new User(body);
 
   if (req.file) {
-    const { filename } = req.file;
-    user.setImageUrl(filename);
+    const { filename, fieldname, mimetype } = req.file;
+    const blob = bucket.file(
+      `${fieldname}-${Date.now()}.${mimetype.split("/")[1]}`
+    );
+    const blobStream = blob.createWriteStream();
+    blobStream.on("error", (err) => {
+      console.log(err.toString());
+    });
+
+    // res process
+    blobStream.on("finish", (err) => {
+      console.log(err.toString());
+    });
+
+    blobStream.end(req.file.buffer);
+    user.setImageUrl(
+      `${process.env.GOOGLEAPIS_STORAGE}/${bucket.name}/${blob.name}`
+    );
   }
 
   if (!user) {
@@ -27,7 +48,7 @@ createUser = (req, res) => {
   user
     .save()
     .then(() => {
-      log.info(`User with ID ${user._id} was created`);
+      logInfo.info(`User with ID ${user._id} was created`);
       return res.status(201).json({
         success: true,
         id: user._id,
@@ -35,7 +56,7 @@ createUser = (req, res) => {
       });
     })
     .catch((error) => {
-      logger.error(error.toString());
+      logError.error(error.toString());
       return res.status(203).json({
         error,
         message: "User not created!",
@@ -47,7 +68,7 @@ updateUser = async (req, res) => {
   const body = req.body;
 
   if (Object.entries(body).length === 0 || body == null) {
-    logger.error(`You must provide a body to update`);
+    logError.error(`You must provide a body to update`);
     return res.status(203).json({
       success: false,
       error: "You must provide a body to update",
@@ -56,7 +77,7 @@ updateUser = async (req, res) => {
 
   User.findOne({ _id: req.params.id }, (err, usr) => {
     if (err) {
-      logger.error(err.toString());
+      logError.error(err.toString());
       return res.status(203).json({
         success: false,
         error: err,
@@ -73,23 +94,29 @@ updateUser = async (req, res) => {
     user.status = body.status;
     user.rol = body.rol;
     if (req.file) {
-      if (user.imageUrl) {
-        const arr = user.imageUrl.split("/");
-        const path = `./uploads/${arr[arr.length - 1]}`;
-        fs.unlink(path, (err) => {
-          if (err) {
-            logger.error(err.toString);
-            return;
-          }
-        });
-      }
-      const { filename } = req.file;
-      user.setImageUrl(filename);
+      const { filename, fieldname, mimetype } = req.file;
+      const blob = bucket.file(
+        `${fieldname}-${Date.now()}.${mimetype.split("/")[1]}`
+      );
+      bucket.file(user.imageUrl).delete();
+      const blobStream = blob.createWriteStream();
+      blobStream.on("error", (err) => {
+        //console.log(err);
+      });
+
+      // res process
+      blobStream.on("finish", (err) => {
+        //console.log(err);
+      });
+      blobStream.end(req.file.buffer);
+      user.setImageUrl(
+        `${process.env.GOOGLEAPIS_STORAGE}/${bucket.name}/${blob.name}`
+      );
     }
     user
       .save()
       .then(() => {
-        logger.info(`User with ID ${user._id} was created!`);
+        logInfo.info(`User with ID ${user._id} was created!`);
         return res.status(200).json({
           success: true,
           id: user._id,
@@ -97,7 +124,7 @@ updateUser = async (req, res) => {
         });
       })
       .catch((error) => {
-        logger.error(error.toString());
+        logError.error(error.toString());
         return res.status(203).json({
           success: false,
           error,
@@ -110,15 +137,15 @@ updateUser = async (req, res) => {
 deleteUser = async (req, res) => {
   await User.findOneAndDelete({ _id: req.params.id }, (err, user) => {
     if (err) {
-      logger.error(err.toString());
+      logError.error(err.toString());
       return res.status(203).json({ success: false, error: err });
     }
 
     if (!user) {
-      logger.error(`User with ID ${req.params.id} not found`);
+      logError.error(`User with ID ${req.params.id} not found`);
       return res.status(203).json({ success: false, error: `User not found` });
     }
-    logger.error(`User with ID ${req.params.id} deleted`);
+    logError.error(`User with ID ${req.params.id} deleted`);
     return res.status(200).json({ success: true, data: user });
   })
     .populate("rol")
@@ -128,15 +155,15 @@ deleteUser = async (req, res) => {
 getUserById = async (req, res) => {
   await User.findOne({ _id: req.params.id }, (err, user) => {
     if (err) {
-      logger.error(err.toString());
+      logError.error(err.toString());
       return res.status(203).json({ success: false, error: err });
     }
 
     if (!user) {
-      logger.error(`User with ID ${req.params.id} deleted`);
+      logError.error(`User with ID ${req.params.id} deleted`);
       return res.status(203).json({ success: false, error: `User not found` });
     }
-    logger.info(`User with ID ${req.params.id} found`);
+    logInfo.info(`User with ID ${req.params.id} found`);
     return res.status(200).json({ success: true, data: user });
   })
     .populate("rol")
@@ -146,7 +173,7 @@ getUserById = async (req, res) => {
 loginUser = async (req, res) => {
   const body = req.body;
   if (Object.entries(body).length === 0 || body == null) {
-    logger.error(`You must provide a body to update`);
+    logError.error(`You must provide a body to update`);
     return res.status(203).json({
       success: false,
       error: "You must provide a body to update",
@@ -156,17 +183,17 @@ loginUser = async (req, res) => {
     { username: body.username, password: body.password },
     (err, user) => {
       if (err) {
-        logger.error(err.toString());
+        logError.error(err.toString());
         return res.status(203).json({ success: false, error: err });
       }
 
       if (!user) {
-        logger.error(`User ${body.username} not found`);
+        logError.error(`User ${body.username} not found`);
         return res
           .status(203)
           .json({ success: false, error: `User not found` });
       }
-      logger.info(`User ${user._id} loging success`);
+      logInfo.info(`User ${user._id} loging success`);
       return res.status(200).json({ success: true, data: user });
     }
   )
@@ -184,16 +211,16 @@ getUsers = async (req, res) => {
   });
   await User.find({}, (err, users) => {
     if (err) {
-      logger.error(err.toString());
+      logError.error(err.toString());
       return res.status(203).json({ success: false, error: err });
     }
     if (!users.length) {
-      logger.error(`Users not founds`);
+      logError.error(`Users not founds`);
       return res
         .status(203)
         .json({ success: false, error: `User not founds!` });
     }
-    logger.info(`Users found`);
+    logInfo.info(`Users found`);
     return res.status(200).json({ success: true, data: users, totalpages });
   })
     .limit(limit)

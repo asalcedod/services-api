@@ -16,7 +16,7 @@ const User = new Schema(
 )
 
 User.methods.setImageUrl = function(filename) {
-    this.imageUrl = `http://localhost:3000/public/${filename}`
+    this.imageUrl = `${filename}`
 }
 
 module.exports = mongoose.model('User', User)

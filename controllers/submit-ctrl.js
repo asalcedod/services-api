@@ -123,7 +123,7 @@ getSubmits = async (req, res) => {
     return res.status(200).json({ success: true, data: submits, totalpages });
   })
     .limit(limit)
-    .skip(pages * limit)
+    .skip(page * limit)
     .catch((err) => console.log(err));
 };
 
