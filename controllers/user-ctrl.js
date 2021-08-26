@@ -209,7 +209,7 @@ getUsers = async (req, res) => {
   await User.count((error, result) => {
     totalpages = Math.ceil(result / limit);
   });
-  await User.find({}, (err, users) => {
+  await User.find({ }, (err, users) => {
     if (err) {
       logError.error(err.toString());
       return res.status(203).json({ success: false, error: err });
@@ -225,7 +225,9 @@ getUsers = async (req, res) => {
   })
     .limit(limit)
     .skip(limit * page)
-    .populate("rol")
+    .populate({ path: "rol", match: { code: "ROOT01" } })
+    .where("rol")
+    .ne(null)
     .catch((err) => console.log(err));
 };
 
