@@ -12,6 +12,14 @@ const User = new Schema(
         status: { type: Number, required: true, default: 1 },
         rol: {type: mongoose.Schema.Types.ObjectId, ref: 'Rol'}
     },
+    {
+      toObject: {
+        virtuals: true,
+      },
+      toJSON: {
+        virtuals: true,
+      },
+    },
     { timestamps: true },
 )
 

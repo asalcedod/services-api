@@ -8,7 +8,12 @@ const Action = new Schema(
         description: { type: String, required: true },
         status: { type: Number, required: true, default: 1 },
     },
-    { timestamps: true },
+    {
+      timestamps: true,
+      toJSON: {
+        virtuals: true,
+      },
+    },
 )
 
 module.exports = mongoose.model('Action', Action)

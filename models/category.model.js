@@ -8,6 +8,14 @@ const Category = new Schema(
         description: { type: String },
         status: { type: Number, required: true, default: 1 },
     },
+    {
+      toObject: {
+        virtuals: true,
+      },
+      toJSON: {
+        virtuals: true,
+      },
+    },
     { timestamps: true },
 )
 
